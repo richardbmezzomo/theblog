@@ -3,6 +3,7 @@ import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 export const posts = pgTable("posts", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
+  coverImageUrl: text("cover_image_url").notNull(),
   slug: text("slug").notNull().unique(),
   excerpt: text("excerpt").notNull(),
   content: text("content").notNull(),
