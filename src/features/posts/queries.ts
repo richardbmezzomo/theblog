@@ -4,13 +4,16 @@ import { posts } from "@/db/schema"
 
 // fetch all the posts created and published
 export async function getAllPosts() {
+  return await db.select().from(posts).orderBy(desc(posts.createdAt))
+}
+
+export async function getAllPublishedPosts() {
   return await db
     .select()
     .from(posts)
     .where(eq(posts.published, true))
     .orderBy(desc(posts.createdAt))
 }
-
 // fetch a single post by slug
 export async function getPostBySlug(slug: string) {
   const post = await db

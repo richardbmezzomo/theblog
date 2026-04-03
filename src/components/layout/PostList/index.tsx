@@ -3,7 +3,7 @@ import Link from "next/link"
 import { PostHeading } from "@/components/layout/PostHeading"
 import type { getAllPosts } from "@/features/posts/queries"
 
-type Post = Awaited<ReturnType<typeof getAllPosts>>[number]
+export type Post = Awaited<ReturnType<typeof getAllPosts>>[number]
 
 type PostListProps = {
   posts: Post[]
@@ -19,15 +19,16 @@ const PostsList = ({ posts }: PostListProps) => {
       {/* Post em destaque */}
       <section className="grid grid-cols-1 gap-8 sm:grid-cols-2 group">
         <Link
-          className="relative w-full overflow-hidden rounded-xl aspect-video"
+          className="relative w-full overflow-hidden rounded-xl aspect-video group transform-gpu transition-shadow duration-500 hover:shadow-2xl"
           href={`/${latest.slug}`}
         >
           <Image
             src={latest.coverImageUrl}
             alt={latest.title}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, 50vw"
+            priority
           />
         </Link>
         <div className="flex flex-col gap-4 sm:justify-center">
@@ -48,14 +49,14 @@ const PostsList = ({ posts }: PostListProps) => {
           {rest.map((post) => (
             <article key={post.id} className="flex flex-col gap-3">
               <Link
-                className="relative overflow-hidden rounded-lg aspect-video block"
+                className="relative overflow-hidden rounded-lg aspect-video block group transform-gpu transition-shadow duration-500 hover:shadow-2xl"
                 href={`/${post.slug}`}
               >
                 <Image
                   src={post.coverImageUrl}
                   alt={post.title}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </Link>
