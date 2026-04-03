@@ -3,7 +3,6 @@ import { getSession } from "./lib/session"
 
 export async function proxy(request: NextRequest) {
   const session = await getSession()
-  console.log("Session", session)
 
   if (!session.isAdmin) {
     return NextResponse.redirect(new URL("/admin/login", request.url))
