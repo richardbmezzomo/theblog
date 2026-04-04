@@ -41,27 +41,16 @@ export const PostEditor = ({ post }: PostEditorProps) => {
       <input type="hidden" name="id" value={post.id} />
       <input type="hidden" name="published" value={String(published)} />
 
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="title">Title</Label>
+        <Input
+          id="title"
+          name="title"
+          placeholder="Post title"
+          defaultValue={post.title}
+        />
+      </div>
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            name="title"
-            placeholder="Post title"
-            defaultValue={post.title}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="slug">Slug</Label>
-          <Input
-            id="slug"
-            name="slug"
-            placeholder="post-slug"
-            defaultValue={post.slug}
-          />
-        </div>
-
         <div className="flex flex-col gap-1">
           <Label htmlFor="coverImageUrl">Cover Image URL</Label>
           <Input

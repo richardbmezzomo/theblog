@@ -26,17 +26,11 @@ export const NewPostForm = () => {
       action={formAction}
       className="flex flex-col h-full overflow-hidden p-4 gap-4"
     >
-      <input type="hidden" name="published" value={String(published)} />
-
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="title">Title</Label>
+        <Input id="title" name="title" placeholder="Post title" />
+      </div>
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" name="title" placeholder="Post title" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="slug">Slug</Label>
-          <Input id="slug" name="slug" placeholder="post-slug" />
-        </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor="coverImageUrl">Cover Image URL</Label>
           <Input
@@ -60,6 +54,7 @@ export const NewPostForm = () => {
       </div>
 
       <div className="flex items-center justify-between">
+        <input type="hidden" name="published" value={String(published)} />
         <FieldGroup className="w-56">
           <Field orientation="horizontal">
             <Checkbox
