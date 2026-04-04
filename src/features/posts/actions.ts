@@ -156,9 +156,21 @@ export const deletePost = async (
     return { success: false, error: result.error.issues[0].message }
   }
 
+  const deletedPost = await db
+    .select({ slug: posts.slug })
+    .from(posts)
+    .where(eq(posts.id, result.data.id))
+    .limit(1)
+
   await db.delete(posts).where(eq(posts.id, result.data.id))
 
+  if (deletedPost[0]) {
+    revalidatePath(`/admin/posts/${deletedPost[0].slug}`)
+    revalidatePath(`/${deletedPost[0].slug}`)
+  }
+
   revalidatePath("/admin/posts")
+  revalidatePath("/")
 
   return { success: true }
 }
