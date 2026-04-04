@@ -75,6 +75,10 @@ export const createPost = async (
     published: result.data.published,
   })
 
+  revalidatePath("/")
+  revalidatePath("/admin/posts")
+  revalidatePath(`/${result.data.slug}`)
+
   redirect(`/admin/posts/${result.data.slug}` as Route)
 }
 
