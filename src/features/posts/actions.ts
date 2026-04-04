@@ -16,7 +16,7 @@ const createPostSchema = z.object({
   coverImageUrl: z.url().min(2).max(200),
   slug: z.string().min(2).max(100),
   excerpt: z.string().min(2).max(200),
-  content: z.string().min(500).max(50000),
+  content: z.string().min(2).max(50000),
   published: z.boolean().default(false),
 })
 
@@ -26,7 +26,7 @@ const updatePostSchema = z.object({
   coverImageUrl: z.url().min(2).max(200),
   slug: z.string().min(2).max(100),
   excerpt: z.string().min(2).max(200),
-  content: z.string().min(500).max(50000),
+  content: z.string().min(2).max(50000),
   published: z.boolean().default(false),
 })
 
