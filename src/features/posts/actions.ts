@@ -1,11 +1,12 @@
 "use server"
-import { eq } from "drizzle-orm"
+import { and, eq, ne } from "drizzle-orm"
 import type { Route } from "next"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 import { db } from "@/db"
 import { posts } from "@/db/schema"
+import { createSlug } from "@/lib/createSlug"
 import { getSession } from "@/lib/session"
 
 export type ActionState = { success: boolean; error?: string } | null
@@ -46,7 +47,7 @@ export const createPost = async (
   const result = createPostSchema.safeParse({
     title: formData.get("title"),
     coverImageUrl: formData.get("coverImageUrl"),
-    slug: formData.get("slug"),
+    slug: createSlug(formData.get("title") as string),
     excerpt: formData.get("excerpt"),
     content: formData.get("content"),
     published: formData.get("published") === "true",
@@ -54,6 +55,15 @@ export const createPost = async (
 
   if (!result.success) {
     return { success: false, error: result.error.issues[0].message }
+  }
+
+  const existingSlug = await db
+    .select()
+    .from(posts)
+    .where(eq(posts.slug, result.data.slug))
+
+  if (existingSlug.length > 0) {
+    return { success: false, error: "Slug already exists. Change the title." }
   }
 
   await db.insert(posts).values({
@@ -82,7 +92,7 @@ export const updatePost = async (
     id: formData.get("id"),
     title: formData.get("title"),
     coverImageUrl: formData.get("coverImageUrl"),
-    slug: formData.get("slug"),
+    slug: createSlug(formData.get("title") as string),
     excerpt: formData.get("excerpt"),
     content: formData.get("content"),
     published: formData.get("published") === "true",
@@ -91,6 +101,21 @@ export const updatePost = async (
   if (!result.success) {
     return { success: false, error: result.error.issues[0].message }
   }
+
+  const existingSlug = await db
+    .select({ id: posts.id })
+    .from(posts)
+    .where(and(eq(posts.slug, result.data.slug), ne(posts.id, result.data.id)))
+
+  if (existingSlug.length > 0) {
+    return { success: false, error: "Slug already exists. Change the title." }
+  }
+
+  const currentPost = await db
+    .select({ slug: posts.slug })
+    .from(posts)
+    .where(eq(posts.id, result.data.id))
+    .limit(1)
 
   await db
     .update(posts)
@@ -104,10 +129,13 @@ export const updatePost = async (
     })
     .where(eq(posts.id, result.data.id))
 
-  revalidatePath("/admin/posts")
+  revalidatePath(`/admin/posts/${currentPost[0].slug}`)
   revalidatePath(`/admin/posts/${result.data.slug}`)
+  revalidatePath(`/${currentPost[0].slug}`)
+  revalidatePath(`/${result.data.slug}`)
+  revalidatePath("/admin/posts")
 
-  return { success: true }
+  redirect(`/admin/posts/${result.data.slug}` as Route)
 }
 
 export const deletePost = async (
